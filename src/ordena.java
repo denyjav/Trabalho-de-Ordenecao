@@ -228,7 +228,7 @@ public class ordena {
 		File saida = new File("saida.txt");
 		saida.createNewFile();
 
-		FileWriter fileWriter = new FileWriter(saida);
+		FileWriter fileWriter = new FileWriter(saida, true);
 
 		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
@@ -246,6 +246,7 @@ public class ordena {
 		for (int i = 0; i < vetorOrdenado.length; i++) {
 			bufferedWriter.write(vetorOrdenado[i] + " ");
 		}
+		bufferedWriter.newLine();
 		bufferedWriter.newLine();
 
 		bufferedWriter.close();
