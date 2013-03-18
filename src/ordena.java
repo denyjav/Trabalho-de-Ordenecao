@@ -8,32 +8,53 @@ public class ordena {
 		int tamanhoDoVetor = Integer.parseInt(args[0]);
 		int tipoDeOrdenacao = Integer.parseInt(args[1]);
 		int[] vetor = new int[tamanhoDoVetor];
-
+		boolean geraArquivoTxt = false;
+		
+		if(tamanhoDoVetor < 100)
+			geraArquivoTxt = true;
+		
 		String ordenacao = geraLista(vetor, tipoDeOrdenacao);
 
 		int[] vetorCopia = vetor.clone();
 		System.out.println("Insercao (" + vetorCopia.length + " - " + ordenacao + ")");
 		long tempo = System.nanoTime();
 		insercao(vetorCopia);
-		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms");
-
+		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
+		if(geraArquivoTxt)
+			escreveVetorEmUmArquivo("Insercao", vetor, vetorCopia);
+		
+		vetorCopia = vetor.clone();
+		System.out.println("CocktailSort (" + vetorCopia.length + " - " + ordenacao + ")");
+		tempo = System.nanoTime();
+		cocktailSort(vetorCopia);
+		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
+		if (geraArquivoTxt)
+			escreveVetorEmUmArquivo("CocktailSort", vetor, vetorCopia);
+		
 		vetorCopia = vetor.clone();
 		System.out.println("Selecao (" + vetorCopia.length + " - " + ordenacao + ")");
 		tempo = System.nanoTime();
 		selecao(vetorCopia);
-		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms");
+		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
+		if(geraArquivoTxt)
+			escreveVetorEmUmArquivo("Selecao", vetor, vetorCopia);
 
 		vetorCopia = vetor.clone();
 		System.out.println("ShellSort (" + vetorCopia.length + " - " + ordenacao + ")");
 		tempo = System.nanoTime();
 		shellSort(vetorCopia);
-		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms");
+		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
+		if(geraArquivoTxt)
+			escreveVetorEmUmArquivo("ShellSort", vetor, vetorCopia);
 
 		vetorCopia = vetor.clone();
 		System.out.println("MergeSort (" + vetorCopia.length + " - " + ordenacao + ")");
 		tempo = System.nanoTime();
 		mergeSort(vetorCopia, 0, vetorCopia.length - 1);
-		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms");
+		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
+		if (geraArquivoTxt)
+			escreveVetorEmUmArquivo("MergeSort", vetor, vetorCopia);
+		
 	}
 
 	public static void cocktailSort(int[] vetor) {
@@ -128,24 +149,26 @@ public class ordena {
 
 	private static void merge(int[] vetor, int inicio, int meio, int fim) {
 		int i = inicio, j = meio + 1, k = 0;
-		int vetorAux[] = new int[fim - inicio];
+		int aux[] = new int[fim - inicio];
 
 		while (i <= meio && j <= fim) {
 			if (vetor[i] <= vetor[j]) {
-				vetorAux[k] = vetor[i];
+				aux[k] = vetor[i];
 				i++;
 			} else {
-				vetorAux[k] = vetor[j];
+				aux[k] = vetor[j];
 				j++;
 			}
 			k++;
 		}
 		if (i <= meio) {
-			for (j = meio; j >= i; j--)
+			for (j = meio; j >= i; j--) {
 				vetor[fim - meio + j] = vetor[j];
+			}
 		}
-		for (i = 0; i < k; i++)
-			vetor[inicio + i] = vetorAux[i];
+		for (i = 0; i < k; i++) {
+			vetor[inicio + i] = aux[i];
+		}
 	}
 
 	public static void quickSort(int[] vetor, int inicio, int fim) {
@@ -185,7 +208,7 @@ public class ordena {
 			for (int i = 0; i < vetor.length; i++) {
 				vetor[i] = (int) (Math.random() * vetor.length) * 10; // gerando n�meros aleat�rios de 1 at� o tamanho do vetor
 			}
-			return "Aleat�ria";
+			return "Aleatoria";
 		} else if (opcao == 2) {
 			int j = 0;
 			for (int i = vetor.length - 1; i > 0; i--) {

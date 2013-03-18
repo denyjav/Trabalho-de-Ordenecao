@@ -3,12 +3,12 @@ public class Teste {
 		
 		int[] a = new int[10];
 		for (int i = 0; i < a.length; i++) {
-			a[i] = (int)Math.random() * 10;
+			a[i] = (int)(Math.random() * 10);
 		}
 		
-		System.out.println(a);
+		System.out.println(a.toString());
 		cocktailSort(a);
-		System.out.println(a);
+		System.out.println(a.toString());
 		
 	}
 	
