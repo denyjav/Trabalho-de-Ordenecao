@@ -16,15 +16,27 @@ public class ordena {
 		String ordenacao = geraLista(vetor, tipoDeOrdenacao);
 
 		int[] vetorCopia = vetor.clone();
-		System.out.println("Insercao (" + vetorCopia.length + " - " + ordenacao + ")");
-		long tempo = System.nanoTime();
-		insercao(vetorCopia);
-		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
-		if(geraArquivoTxt)
-			escreveVetorEmUmArquivo("Insercao", vetor, vetorCopia);
+		long tempo;
+
+		if(tamanhoDoVetor < 50000){
+			System.out.println("Insercao (" + tamanhoDoVetor + " - " + ordenacao + ")");
+			tempo = System.nanoTime();
+			insercao(vetorCopia);
+			System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
+			if(geraArquivoTxt)
+				escreveVetorEmUmArquivo("Insercao", vetor, vetorCopia);
+
+			vetorCopia = vetor.clone();
+			System.out.println("Selecao (" + tamanhoDoVetor + " - " + ordenacao + ")");
+			tempo = System.nanoTime();
+			selecao(vetorCopia);
+			System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
+			if(geraArquivoTxt)
+				escreveVetorEmUmArquivo("Selecao", vetor, vetorCopia);
+		}
 		
 		vetorCopia = vetor.clone();
-		System.out.println("CocktailSort (" + vetorCopia.length + " - " + ordenacao + ")");
+		System.out.println("CocktailSort (" + tamanhoDoVetor + " - " + ordenacao + ")");
 		tempo = System.nanoTime();
 		cocktailSort(vetorCopia);
 		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
@@ -32,15 +44,7 @@ public class ordena {
 			escreveVetorEmUmArquivo("CocktailSort", vetor, vetorCopia);
 		
 		vetorCopia = vetor.clone();
-		System.out.println("Selecao (" + vetorCopia.length + " - " + ordenacao + ")");
-		tempo = System.nanoTime();
-		selecao(vetorCopia);
-		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
-		if(geraArquivoTxt)
-			escreveVetorEmUmArquivo("Selecao", vetor, vetorCopia);
-
-		vetorCopia = vetor.clone();
-		System.out.println("ShellSort (" + vetorCopia.length + " - " + ordenacao + ")");
+		System.out.println("ShellSort (" + tamanhoDoVetor + " - " + ordenacao + ")");
 		tempo = System.nanoTime();
 		shellSort(vetorCopia);
 		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
@@ -48,7 +52,7 @@ public class ordena {
 			escreveVetorEmUmArquivo("ShellSort", vetor, vetorCopia);
 
 		vetorCopia = vetor.clone();
-		System.out.println("MergeSort (" + vetorCopia.length + " - " + ordenacao + ")");
+		System.out.println("MergeSort (" + tamanhoDoVetor + " - " + ordenacao + ")");
 		tempo = System.nanoTime();
 		mergeSort(vetorCopia, 0, vetorCopia.length - 1);
 		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
@@ -59,8 +63,8 @@ public class ordena {
 
 	public static void cocktailSort(int[] vetor) {
 		boolean swap = true;
-		int i = 0;
-		int j = vetor.length - 1;
+		int i = 0, j = vetor.length - 1;
+		int comparacoes = 0, movimentacoes = 0;
 		while (i < j && swap) {
 			swap = false;
 			for (int k = i; k < j; k++) {
@@ -69,6 +73,8 @@ public class ordena {
 					vetor[k] = vetor[k + 1];
 					vetor[k + 1] = temp;
 					swap = true;
+					
+					movimentacoes = movimentacoes + 3;
 				}
 			}
 			j--;
@@ -80,43 +86,63 @@ public class ordena {
 						vetor[k] = vetor[k - 1];
 						vetor[k - 1] = temp;
 						swap = true;
+
+						movimentacoes = movimentacoes + 3;
 					}
 				}
 			}
 			i++;
 		}
+
+		System.out.print("Comparacoes: " + comparacoes + "   ");
+		System.out.print("Movimentacoes: " + movimentacoes + "   ");
 	}
 
 	public static void insercao(int[] vetor) {
+		int comparacoes = 0, movimentacoes = 0;
+
 		for (int i = 0; i < vetor.length; i++) {
 			int pivo = vetor[i];
+			movimentacoes++;
 
 			int j = i - 1;
 
 			while (j >= 0 && vetor[j] > pivo) {
 				vetor[j + 1] = vetor[j];
 				j--;
+				movimentacoes++;
 			}
 			vetor[j + 1] = pivo;
+			movimentacoes++;
 		}
+
+		System.out.print("Comparacoes: " + comparacoes + "   ");
+		System.out.print("Movimentacoes: " + movimentacoes + "   ");
 	}
 
 	public static void selecao(int[] vetor) {
+		int comparacoes = 0, movimentacoes = 0;
+		
 		for (int i = 0; i < vetor.length - 1; i++) {
 			int min = i;
 
 			for (int j = i + 1; j < vetor.length; j++) {
-				if (vetor[j] < vetor[min])
+				if (vetor[j] < vetor[min]) {
 					min = j;
+				}
 			}
 			int swap = vetor[i];
 			vetor[i] = vetor[min];
 			vetor[min] = swap;
+			movimentacoes = movimentacoes + 3;
 		}
+
+		System.out.print("Comparacoes: " + comparacoes + "   ");
+		System.out.print("Movimentacoes: " + movimentacoes + "   ");
 	}
 
 	public static void shellSort(int[] vetor) {
-		int hlistas = 1;
+		int hlistas = 1, comparacoes = 0, movimentacoes = 0;
 
 		while (hlistas < vetor.length)
 			hlistas = 3 * hlistas + 1;
@@ -125,14 +151,22 @@ public class ordena {
 			for (int i = 0; i < vetor.length; i++) {
 				int pivo = vetor[i];
 				int j = i - hlistas;
+				
+				movimentacoes++;
 
 				while (j >= 0 && vetor[j] > pivo) {
 					vetor[j + hlistas] = vetor[j];
 					j = j - hlistas;
+					
+					movimentacoes++;
 				}
 				vetor[j + hlistas] = pivo;
+				movimentacoes++;
 			}
 		} while (hlistas > 1);
+		
+		System.out.print("Comparacoes: " + comparacoes + "   ");
+		System.out.print("Movimentacoes: " + movimentacoes + "   ");
 	}
 
 	public static void mergeSort(int[] vetor, int inicio, int fim) {
