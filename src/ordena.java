@@ -3,6 +3,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/*
+ * Wagner de Sousa
+ * Jorge Lima
+ * 
+ */
+
 public class ordena {
 	public static void main(String[] args) throws IOException {
 		int tamanhoDoVetor = Integer.parseInt(args[0]);
@@ -59,6 +65,13 @@ public class ordena {
 		if (geraArquivoTxt)
 			escreveVetorEmUmArquivo("MergeSort", vetor, vetorCopia);
 		
+		vetorCopia = vetor.clone();
+		System.out.println("QuickSort (" + tamanhoDoVetor + " - " + ordenacao + ")");
+		tempo = System.nanoTime();
+		quickSort(vetorCopia, 0, vetorCopia.length - 1);
+		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
+		if (geraArquivoTxt)
+			escreveVetorEmUmArquivo("QuickSort", vetor, vetorCopia);		
 	}
 
 	public static void cocktailSort(int[] vetor) {
@@ -111,6 +124,7 @@ public class ordena {
 				vetor[j + 1] = vetor[j];
 				j--;
 				movimentacoes++;
+				comparacoes++;
 			}
 			vetor[j + 1] = pivo;
 			movimentacoes++;
@@ -129,6 +143,7 @@ public class ordena {
 			for (int j = i + 1; j < vetor.length; j++) {
 				if (vetor[j] < vetor[min]) {
 					min = j;
+					comparacoes++;
 				}
 			}
 			int swap = vetor[i];
@@ -159,10 +174,12 @@ public class ordena {
 					j = j - hlistas;
 					
 					movimentacoes++;
+					comparacoes++;
 				}
 				vetor[j + hlistas] = pivo;
 				movimentacoes++;
 			}
+			comparacoes++;
 		} while (hlistas > 1);
 		
 		System.out.print("Comparacoes: " + comparacoes + "   ");
