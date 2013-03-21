@@ -71,7 +71,15 @@ public class ordena {
 		quickSort(vetorCopia, 0, vetorCopia.length - 1);
 		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
 		if (geraArquivoTxt)
-			escreveVetorEmUmArquivo("QuickSort", vetor, vetorCopia);		
+			escreveVetorEmUmArquivo("QuickSort", vetor, vetorCopia);
+		
+		vetorCopia = vetor.clone();
+		System.out.println("QuickSort Probabilisto (" + tamanhoDoVetor + " - " + ordenacao + ")");
+		tempo = System.nanoTime();
+		quickSortProbabilisto(vetorCopia, 0, vetorCopia.length - 1);
+		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
+		if (geraArquivoTxt)
+			escreveVetorEmUmArquivo("QuickSort Probabilisto", vetor, vetorCopia);
 	}
 
 	public static void cocktailSort(int[] vetor) {
@@ -88,6 +96,7 @@ public class ordena {
 					swap = true;
 					
 					movimentacoes = movimentacoes + 3;
+					comparacoes++;
 				}
 			}
 			j--;
@@ -101,6 +110,7 @@ public class ordena {
 						swap = true;
 
 						movimentacoes = movimentacoes + 3;
+						comparacoes++;
 					}
 				}
 			}
@@ -253,11 +263,46 @@ public class ordena {
 
 		return j;
 	}
+	
+	public static void quickSortProbabilisto(int[] vetor, int inicio, int fim) {
+		if (inicio < fim) {
+			int particao = particaoProbabilisto(vetor, inicio, fim);
+			if (inicio < particao - 1)
+				quickSortProbabilisto(vetor, inicio, particao - 1);
+			else if (particao + 1 < fim)
+				quickSortProbabilisto(vetor, particao + 1, fim);
+		}
+	}
+
+	private static int particaoProbabilisto(int[] vetor, int inicio, int fim) {
+		int indice = (int)Math.random() * vetor.length;
+		
+		int pivo = vetor[indice];
+		int i = inicio + 1, j = fim;
+		while (i <= j) {
+			while (i <= j && vetor[i] <= pivo)
+				i++;
+			while (vetor[j] > pivo)
+				j--;
+			if (i <= j) {
+				int swap = vetor[i];
+				vetor[i] = vetor[j];
+				vetor[j] = swap;
+				i++;
+				j--;
+			}
+		}
+		int troca = vetor[inicio];
+		vetor[inicio] = vetor[j];
+		vetor[j] = troca;
+
+		return j;
+	}
 
 	private static String geraLista(int vetor[], int opcao) {
 		if (opcao == 1) {
 			for (int i = 0; i < vetor.length; i++) {
-				vetor[i] = (int) (Math.random() * vetor.length) * 10; // gerando n�meros aleat�rios de 1 at� o tamanho do vetor
+				vetor[i] = (int) (Math.random() * vetor.length) * 10; // gerando numeros aleatorios de 1 ate o tamanho do vetor
 			}
 			return "Aleatoria";
 		} else if (opcao == 2) {
