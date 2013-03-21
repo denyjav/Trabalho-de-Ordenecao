@@ -5,11 +5,15 @@ import java.io.IOException;
 
 /*
  * Wagner de Sousa
- * Jorge Lima
- * 
+ * Jorge Luis
+ * Eduardo Luiz Braid
+ * Paulo Gurgel
  */
 
 public class ordena {
+	private static int comparacoes = 0;
+	private static int movimentacoes = 0;
+	
 	public static void main(String[] args) throws IOException {
 		int tamanhoDoVetor = Integer.parseInt(args[0]);
 		int tipoDeOrdenacao = Integer.parseInt(args[1]);
@@ -61,22 +65,34 @@ public class ordena {
 		System.out.println("MergeSort (" + tamanhoDoVetor + " - " + ordenacao + ")");
 		tempo = System.nanoTime();
 		mergeSort(vetorCopia, 0, vetorCopia.length - 1);
+		System.out.print("Comparacoes: " + comparacoes + "   ");
+		System.out.print("Movimentacoes: " + movimentacoes + "   ");
 		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
 		if (geraArquivoTxt)
 			escreveVetorEmUmArquivo("MergeSort", vetor, vetorCopia);
+		
+		comparacoes = 0;
+		movimentacoes = 0;
 		
 		vetorCopia = vetor.clone();
 		System.out.println("QuickSort (" + tamanhoDoVetor + " - " + ordenacao + ")");
 		tempo = System.nanoTime();
 		quickSort(vetorCopia, 0, vetorCopia.length - 1);
+		System.out.print("Comparacoes: " + comparacoes + "   ");
+		System.out.print("Movimentacoes: " + movimentacoes + "   ");
 		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
 		if (geraArquivoTxt)
 			escreveVetorEmUmArquivo("QuickSort", vetor, vetorCopia);
+		
+		comparacoes = 0;
+		movimentacoes = 0;
 		
 		vetorCopia = vetor.clone();
 		System.out.println("QuickSort Probabilisto (" + tamanhoDoVetor + " - " + ordenacao + ")");
 		tempo = System.nanoTime();
 		quickSortProbabilisto(vetorCopia, 0, vetorCopia.length - 1);
+		System.out.print("Comparacoes: " + comparacoes + "   ");
+		System.out.print("Movimentacoes: " + movimentacoes + "   ");
 		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
 		if (geraArquivoTxt)
 			escreveVetorEmUmArquivo("QuickSort Probabilisto", vetor, vetorCopia);
@@ -216,19 +232,25 @@ public class ordena {
 			if (vetor[i] <= vetor[j]) {
 				aux[k] = vetor[i];
 				i++;
+				comparacoes++;
+				movimentacoes++;
 			} else {
 				aux[k] = vetor[j];
 				j++;
+				movimentacoes++;
 			}
 			k++;
+			comparacoes++;
 		}
-		if (i <= meio) {
+		if (i <= meio) {			
 			for (j = meio; j >= i; j--) {
 				vetor[fim - meio + j] = vetor[j];
+				movimentacoes++;
 			}
 		}
 		for (i = 0; i < k; i++) {
 			vetor[inicio + i] = aux[i];
+			movimentacoes++;
 		}
 	}
 
@@ -243,6 +265,7 @@ public class ordena {
 	}
 
 	private static int particao(int[] vetor, int inicio, int fim) {
+		movimentacoes++;
 		int pivo = vetor[inicio], i = inicio + 1, j = fim;
 		while (i <= j) {
 			while (i <= j && vetor[i] <= pivo)
@@ -255,11 +278,16 @@ public class ordena {
 				vetor[j] = swap;
 				i++;
 				j--;
+				
+				comparacoes++;
+				movimentacoes = movimentacoes + 3;						
 			}
+			comparacoes++;
 		}
 		int troca = vetor[inicio];
 		vetor[inicio] = vetor[j];
 		vetor[j] = troca;
+		movimentacoes = movimentacoes + 3;
 
 		return j;
 	}
@@ -275,9 +303,9 @@ public class ordena {
 	}
 
 	private static int particaoProbabilisto(int[] vetor, int inicio, int fim) {
-		int indice = (int)Math.random() * vetor.length;
-		
+		int indice = (int)(Math.random() * vetor.length);
 		int pivo = vetor[indice];
+		movimentacoes++;
 		int i = inicio + 1, j = fim;
 		while (i <= j) {
 			while (i <= j && vetor[i] <= pivo)
@@ -290,12 +318,17 @@ public class ordena {
 				vetor[j] = swap;
 				i++;
 				j--;
+				
+				comparacoes++;
+				movimentacoes = movimentacoes + 3;
 			}
+			comparacoes++;
 		}
 		int troca = vetor[inicio];
 		vetor[inicio] = vetor[j];
 		vetor[j] = troca;
 
+		movimentacoes = movimentacoes + 3;		
 		return j;
 	}
 
