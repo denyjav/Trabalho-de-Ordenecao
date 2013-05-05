@@ -2,334 +2,197 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
-/*
- * Wagner de Sousa
- * Jorge Luis
- * Eduardo Luiz Braid
- * Paulo Gurgel
- */
+import java.util.LinkedList;
 
 public class ordena {
-	private static int comparacoes = 0;
-	private static int movimentacoes = 0;
-	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		int tamanhoDoVetor = Integer.parseInt(args[0]);
 		int tipoDeOrdenacao = Integer.parseInt(args[1]);
 		int[] vetor = new int[tamanhoDoVetor];
 		boolean geraArquivoTxt = false;
-		
-		if(tamanhoDoVetor < 100)
+
+		if (tamanhoDoVetor < 100)
 			geraArquivoTxt = true;
-		
+
 		String ordenacao = geraLista(vetor, tipoDeOrdenacao);
 
 		int[] vetorCopia = vetor.clone();
 		long tempo;
 
-		if(tamanhoDoVetor < 50000){
-			System.out.println("Insercao (" + tamanhoDoVetor + " - " + ordenacao + ")");
-			tempo = System.nanoTime();
-			insercao(vetorCopia);
-			System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
-			if(geraArquivoTxt)
-				escreveVetorEmUmArquivo("Insercao", vetor, vetorCopia);
+		System.out.println("CountingSort (" + tamanhoDoVetor + " - "
+				+ ordenacao + ")");
+		tempo = System.nanoTime();
+		countingSort(vetorCopia);
+		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0
+				+ " ms \n");
+		if (geraArquivoTxt)
+			escreveVetorEmUmArquivo("CountingSort", vetor, vetorCopia);
 
-			vetorCopia = vetor.clone();
-			System.out.println("Selecao (" + tamanhoDoVetor + " - " + ordenacao + ")");
-			tempo = System.nanoTime();
-			selecao(vetorCopia);
-			System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
-			if(geraArquivoTxt)
-				escreveVetorEmUmArquivo("Selecao", vetor, vetorCopia);
-		}
-		
-		vetorCopia = vetor.clone();
-		System.out.println("CocktailSort (" + tamanhoDoVetor + " - " + ordenacao + ")");
+		System.out.println("HeapSort (" + tamanhoDoVetor + " - " + ordenacao
+				+ ")");
 		tempo = System.nanoTime();
-		cocktailSort(vetorCopia);
-		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
+		heapSort(vetorCopia);
+		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0
+				+ " ms \n");
 		if (geraArquivoTxt)
-			escreveVetorEmUmArquivo("CocktailSort", vetor, vetorCopia);
-		
-		vetorCopia = vetor.clone();
-		System.out.println("ShellSort (" + tamanhoDoVetor + " - " + ordenacao + ")");
-		tempo = System.nanoTime();
-		shellSort(vetorCopia);
-		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
-		if(geraArquivoTxt)
-			escreveVetorEmUmArquivo("ShellSort", vetor, vetorCopia);
+			escreveVetorEmUmArquivo("HeapSort", vetor, vetorCopia);
 
-		vetorCopia = vetor.clone();
-		System.out.println("MergeSort (" + tamanhoDoVetor + " - " + ordenacao + ")");
+		System.out.println("RadixSort (" + tamanhoDoVetor + " - " + ordenacao
+				+ ")");
 		tempo = System.nanoTime();
-		mergeSort(vetorCopia, 0, vetorCopia.length - 1);
-		System.out.print("Comparacoes: " + comparacoes + "   ");
-		System.out.print("Movimentacoes: " + movimentacoes + "   ");
-		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
+		radixSort(vetorCopia);
+		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0
+				+ " ms \n");
 		if (geraArquivoTxt)
-			escreveVetorEmUmArquivo("MergeSort", vetor, vetorCopia);
-		
-		comparacoes = 0;
-		movimentacoes = 0;
-		
-		vetorCopia = vetor.clone();
-		System.out.println("QuickSort (" + tamanhoDoVetor + " - " + ordenacao + ")");
-		tempo = System.nanoTime();
-		quickSort(vetorCopia, 0, vetorCopia.length - 1);
-		System.out.print("Comparacoes: " + comparacoes + "   ");
-		System.out.print("Movimentacoes: " + movimentacoes + "   ");
-		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
-		if (geraArquivoTxt)
-			escreveVetorEmUmArquivo("QuickSort", vetor, vetorCopia);
-		
-		comparacoes = 0;
-		movimentacoes = 0;
-		
-		vetorCopia = vetor.clone();
-		System.out.println("QuickSort Probabilisto (" + tamanhoDoVetor + " - " + ordenacao + ")");
-		tempo = System.nanoTime();
-		quickSortProbabilisto(vetorCopia, 0, vetorCopia.length - 1);
-		System.out.print("Comparacoes: " + comparacoes + "   ");
-		System.out.print("Movimentacoes: " + movimentacoes + "   ");
-		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
-		if (geraArquivoTxt)
-			escreveVetorEmUmArquivo("QuickSort Probabilisto", vetor, vetorCopia);
+			escreveVetorEmUmArquivo("RadixSort", vetor, vetorCopia);
 	}
 
-	public static void cocktailSort(int[] vetor) {
-		boolean swap = true;
-		int i = 0, j = vetor.length - 1;
-		int comparacoes = 0, movimentacoes = 0;
-		while (i < j && swap) {
-			swap = false;
-			for (int k = i; k < j; k++) {
-				if (vetor[k] > vetor[k + 1]) {
-					int temp = vetor[k];
-					vetor[k] = vetor[k + 1];
-					vetor[k + 1] = temp;
-					swap = true;
-					
-					movimentacoes = movimentacoes + 3;
-					comparacoes++;
-				}
-			}
-			j--;
-			if (swap) {
-				swap = false;
-				for (int k = j; k > i; k--) {
-					if (vetor[k] < vetor[k - 1]) {
-						int temp = vetor[k];
-						vetor[k] = vetor[k - 1];
-						vetor[k - 1] = temp;
-						swap = true;
+	public static void countingSort(int[] vetor) {
+		if (vetor.length == 0)
+			return;
 
-						movimentacoes = movimentacoes + 3;
-						comparacoes++;
-					}
-				}
+		int max = vetor[0], min = vetor[0];
+		for (int i = 1; i < vetor.length; i++) {
+			if (vetor[i] > max) {
+				max = vetor[i];
+
+			} else if (vetor[i] < min) {
+				min = vetor[i];
+
 			}
-			i++;
 		}
-
-		System.out.print("Comparacoes: " + comparacoes + "   ");
-		System.out.print("Movimentacoes: " + movimentacoes + "   ");
-	}
-
-	public static void insercao(int[] vetor) {
-		int comparacoes = 0, movimentacoes = 0;
-
+		int numValues = max - min + 1;
+		int[] counts = new int[numValues];
 		for (int i = 0; i < vetor.length; i++) {
-			int pivo = vetor[i];
-			movimentacoes++;
-
-			int j = i - 1;
-
-			while (j >= 0 && vetor[j] > pivo) {
-				vetor[j + 1] = vetor[j];
-				j--;
-				movimentacoes++;
-				comparacoes++;
-			}
-			vetor[j + 1] = pivo;
-			movimentacoes++;
+			counts[vetor[i] - min]++;
 		}
-
-		System.out.print("Comparacoes: " + comparacoes + "   ");
-		System.out.print("Movimentacoes: " + movimentacoes + "   ");
+		int outputPos = 0;
+		for (int i = 0; i < numValues; i++) {
+			for (int j = 0; j < counts[i]; j++) {
+				vetor[outputPos] = i + min;
+				outputPos++;
+			}
+		}
 	}
 
-	public static void selecao(int[] vetor) {
-		int comparacoes = 0, movimentacoes = 0;
-		
-		for (int i = 0; i < vetor.length - 1; i++) {
-			int min = i;
+	public static void heapSort(int[] vetor) throws Exception {
+		Heap heap = new Heap(vetor, vetor.length, 0);
 
-			for (int j = i + 1; j < vetor.length; j++) {
-				if (vetor[j] < vetor[min]) {
-					min = j;
-					comparacoes++;
+		for (int i = 0; i < vetor.length; i++)
+			insereHBC(heap, vetor[i]);
+		for (int i = 0; i < vetor.length; i++)
+			vetor[i] = removeMenorHBC(heap);
+	}
+
+	public static void radixSort(int[] vetor) {
+		int[] vetorAux = new int[vetor.length];
+		int[] b_orig = vetorAux;
+		int bits = 4;
+
+		int rshift = 0;
+		for (int mask = ~(-1 << bits); mask != 0; mask <<= bits, rshift += bits) {
+			int[] cntarray = new int[1 << bits];
+			for (int p = 0; p < vetor.length; ++p) {
+				int key = (vetor[p] & mask) >> rshift;
+				++cntarray[key];
+			}
+
+			for (int i = 1; i < cntarray.length; ++i)
+				cntarray[i] += cntarray[i - 1];
+
+			for (int i = vetor.length - 1; i >= 0; --i) {
+				int key = (vetor[i] & mask) >> rshift;
+				--cntarray[key];
+				vetorAux[cntarray[key]] = vetor[i];
+			}
+
+			int[] temp = vetorAux;
+			vetorAux = vetor;
+			vetor = temp;
+		}
+
+		if (vetor == b_orig) {
+			System.arraycopy(vetor, 0, vetorAux, 0, vetor.length);
+		}
+	}
+
+	public static void BucketSort(int[] copia) {
+		int numBuckets = copia.length;
+
+		LinkedList[] linkedLists = new LinkedList[numBuckets];
+
+		for (int i = 0; i < numBuckets; i++)
+			linkedLists[i] = new LinkedList<Integer>();
+
+		// Coloca os valores no bucket respectivo:
+		for (int i = 0; i < copia.length; i++) {
+			int j = numBuckets - 1;
+			while (true) {
+				if (j < 0) {
+					break;
 				}
-			}
-			int swap = vetor[i];
-			vetor[i] = vetor[min];
-			vetor[min] = swap;
-			movimentacoes = movimentacoes + 3;
-		}
-
-		System.out.print("Comparacoes: " + comparacoes + "   ");
-		System.out.print("Movimentacoes: " + movimentacoes + "   ");
-	}
-
-	public static void shellSort(int[] vetor) {
-		int hlistas = 1, comparacoes = 0, movimentacoes = 0;
-
-		while (hlistas < vetor.length)
-			hlistas = 3 * hlistas + 1;
-		do {
-			hlistas = (int) Math.floor(hlistas / 3d);
-			for (int i = 0; i < vetor.length; i++) {
-				int pivo = vetor[i];
-				int j = i - hlistas;
-				
-				movimentacoes++;
-
-				while (j >= 0 && vetor[j] > pivo) {
-					vetor[j + hlistas] = vetor[j];
-					j = j - hlistas;
-					
-					movimentacoes++;
-					comparacoes++;
+				if (copia[i] >= (j * 5)) {
+					linkedLists[j].add(copia[i]);
+					break;
 				}
-				vetor[j + hlistas] = pivo;
-				movimentacoes++;
-			}
-			comparacoes++;
-		} while (hlistas > 1);
-		
-		System.out.print("Comparacoes: " + comparacoes + "   ");
-		System.out.print("Movimentacoes: " + movimentacoes + "   ");
-	}
-
-	public static void mergeSort(int[] vetor, int inicio, int fim) {
-		if (inicio < fim) {
-			int meio = (int) Math.floor((inicio + fim) / 2d);
-			if (inicio < meio)
-				mergeSort(vetor, inicio, meio);
-			if (meio + 1 < fim)
-				mergeSort(vetor, meio + 1, fim);
-
-			merge(vetor, inicio, meio, fim);
-		}
-	}
-
-	private static void merge(int[] vetor, int inicio, int meio, int fim) {
-		int i = inicio, j = meio + 1, k = 0;
-		int aux[] = new int[fim - inicio];
-
-		while (i <= meio && j <= fim) {
-			if (vetor[i] <= vetor[j]) {
-				aux[k] = vetor[i];
-				i++;
-				comparacoes++;
-				movimentacoes++;
-			} else {
-				aux[k] = vetor[j];
-				j++;
-				movimentacoes++;
-			}
-			k++;
-			comparacoes++;
-		}
-		if (i <= meio) {			
-			for (j = meio; j >= i; j--) {
-				vetor[fim - meio + j] = vetor[j];
-				movimentacoes++;
-			}
-		}
-		for (i = 0; i < k; i++) {
-			vetor[inicio + i] = aux[i];
-			movimentacoes++;
-		}
-	}
-
-	public static void quickSort(int[] vetor, int inicio, int fim) {
-		if (inicio < fim) {
-			int particao = particao(vetor, inicio, fim);
-			if (inicio < particao - 1)
-				quickSort(vetor, inicio, particao - 1);
-			else if (particao + 1 < fim)
-				quickSort(vetor, particao + 1, fim);
-		}
-	}
-
-	private static int particao(int[] vetor, int inicio, int fim) {
-		movimentacoes++;
-		int pivo = vetor[inicio], i = inicio + 1, j = fim;
-		while (i <= j) {
-			while (i <= j && vetor[i] <= pivo)
-				i++;
-			while (vetor[j] > pivo)
 				j--;
-			if (i <= j) {
-				int swap = vetor[i];
-				vetor[i] = vetor[j];
-				vetor[j] = swap;
-				i++;
-				j--;
-				
-				comparacoes++;
-				movimentacoes = movimentacoes + 3;						
-			}
-			comparacoes++;
-		}
-		int troca = vetor[inicio];
-		vetor[inicio] = vetor[j];
-		vetor[j] = troca;
-		movimentacoes = movimentacoes + 3;
 
-		return j;
-	}
-	
-	public static void quickSortProbabilisto(int[] vetor, int inicio, int fim) {
-		if (inicio < fim) {
-			int particao = particaoProbabilisto(vetor, inicio, fim);
-			if (inicio < particao - 1)
-				quickSortProbabilisto(vetor, inicio, particao - 1);
-			else if (particao + 1 < fim)
-				quickSortProbabilisto(vetor, particao + 1, fim);
+			}
+		}
+
+		int indice = 0;
+		for (int i = 0; i < numBuckets; i++) {
+
+			int[] aux = new int[linkedLists[i].size()];
+
+			// Coloca cada bucket num vetor:
+			for (int j = 0; j < aux.length; j++)
+				aux[j] = (Integer) linkedLists[i].get(j);
+
+			countingSort(aux); // algoritmo escolhido para ordenação.
+
+			for (int j = 0; j < aux.length; j++, indice++)
+				copia[indice] = aux[j];
 		}
 	}
 
-	private static int particaoProbabilisto(int[] vetor, int inicio, int fim) {
-		int indice = (int)(Math.random() * vetor.length);
-		int pivo = vetor[indice];
-		movimentacoes++;
-		int i = inicio + 1, j = fim;
-		while (i <= j) {
-			while (i <= j && vetor[i] <= pivo)
-				i++;
-			while (vetor[j] > pivo)
-				j--;
-			if (i <= j) {
-				int swap = vetor[i];
-				vetor[i] = vetor[j];
-				vetor[j] = swap;
-				i++;
-				j--;
-				
-				comparacoes++;
-				movimentacoes = movimentacoes + 3;
-			}
-			comparacoes++;
-		}
-		int troca = vetor[inicio];
-		vetor[inicio] = vetor[j];
-		vetor[j] = troca;
+	private static void insereHBC(Heap heap, int x) throws Exception {
+		if (heap.ultima == heap.tamanho)
+			throw new Exception("HEAP OVERFLOW");
 
-		movimentacoes = movimentacoes + 3;		
-		return j;
+		heap.ultima++;
+		int i = heap.ultima;
+		while (i > 1 && Math.floor(i / 2) > x) {
+			heap.vetor[i] = heap.vetor[(int) Math.floor(i / 2)];
+			i = (int) Math.floor(i / 2);
+		}
+		heap.vetor[i] = x;
+	}
+
+	private static int removeMenorHBC(Heap heap) throws Exception {
+		if (heap.ultima == 0)
+			throw new Exception("HEAP UNDERFLOW");
+
+		int valor = heap.vetor[1];
+		heap.vetor[1] = heap.vetor[heap.ultima];
+		heap.ultima = heap.ultima - 1;
+		int i = 1;
+		int menor;
+		while ((2 * i <= heap.ultima && heap.vetor[i] > heap.vetor[2 * i])
+				|| (2 * i < heap.ultima && heap.vetor[i] > heap.vetor[2 * i + 1])) {
+			menor = 2 * i;
+			if (2 * i < heap.ultima
+					&& heap.vetor[2 * i + 1] <= heap.vetor[2 * i])
+				menor++;
+
+			int swap = heap.vetor[i];
+			heap.vetor[i] = heap.vetor[menor];
+			heap.vetor[menor] = swap;
+
+			i = menor;
+		}
+
+		return valor;
 	}
 
 	private static String geraLista(int vetor[], int opcao) {
@@ -353,7 +216,9 @@ public class ordena {
 		}
 	}
 
-	private static void escreveVetorEmUmArquivo(String metodoDeOrdenacao, int[] vetorEmPossivelDesordem, int[] vetorOrdenado) throws IOException {
+	private static void escreveVetorEmUmArquivo(String metodoDeOrdenacao,
+			int[] vetorEmPossivelDesordem, int[] vetorOrdenado)
+			throws IOException {
 		File saida = new File("saida.txt");
 		saida.createNewFile();
 
@@ -381,4 +246,15 @@ public class ordena {
 		bufferedWriter.close();
 		fileWriter.close();
 	}
+}
+
+class Heap {
+	public Heap(int[] vetor, int tamanho, int ultima) {
+		this.vetor = vetor;
+		this.tamanho = tamanho;
+		this.ultima = ultima;
+	}
+
+	public int[] vetor;
+	public int tamanho, ultima;
 }
