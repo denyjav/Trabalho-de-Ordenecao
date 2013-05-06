@@ -4,6 +4,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 
+/*
+ * Wagner de Sousa
+ * Jorge Luis
+ * Eduardo Luiz Braid
+ * Paulo Gurgel
+ */
+
 public class ordena {
 	public static void main(String[] args) throws Exception {
 		int tamanhoDoVetor = Integer.parseInt(args[0]);
@@ -19,32 +26,36 @@ public class ordena {
 		int[] vetorCopia = vetor.clone();
 		long tempo;
 
-		System.out.println("CountingSort (" + tamanhoDoVetor + " - "
-				+ ordenacao + ")");
+		System.out.println("CountingSort (" + tamanhoDoVetor + " - " + ordenacao + ")");
 		tempo = System.nanoTime();
 		countingSort(vetorCopia);
-		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0
-				+ " ms \n");
+		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
 		if (geraArquivoTxt)
 			escreveVetorEmUmArquivo("CountingSort", vetor, vetorCopia);
 
-		System.out.println("HeapSort (" + tamanhoDoVetor + " - " + ordenacao
-				+ ")");
+		vetorCopia = vetor.clone();
+		System.out.println("HeapSort (" + tamanhoDoVetor + " - " + ordenacao + ")");
 		tempo = System.nanoTime();
 		heapSort(vetorCopia);
-		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0
-				+ " ms \n");
+		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
 		if (geraArquivoTxt)
 			escreveVetorEmUmArquivo("HeapSort", vetor, vetorCopia);
 
-		System.out.println("RadixSort (" + tamanhoDoVetor + " - " + ordenacao
-				+ ")");
+		vetorCopia = vetor.clone();
+		System.out.println("RadixSort (" + tamanhoDoVetor + " - " + ordenacao + ")");
 		tempo = System.nanoTime();
 		radixSort(vetorCopia);
-		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0
-				+ " ms \n");
+		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
 		if (geraArquivoTxt)
 			escreveVetorEmUmArquivo("RadixSort", vetor, vetorCopia);
+		
+		vetorCopia = vetor.clone();
+		System.out.println("BucketSort (" + tamanhoDoVetor + " - " + ordenacao + ")");
+		tempo = System.nanoTime();
+		bucketSort(vetorCopia);
+		System.out.println("Tempo: " + (System.nanoTime() - tempo) / 1000000.0 + " ms \n");
+		if (geraArquivoTxt)
+			escreveVetorEmUmArquivo("BucketSort", vetor, vetorCopia);
 	}
 
 	public static void countingSort(int[] vetor) {
@@ -58,7 +69,6 @@ public class ordena {
 
 			} else if (vetor[i] < min) {
 				min = vetor[i];
-
 			}
 		}
 		int numValues = max - min + 1;
@@ -76,8 +86,8 @@ public class ordena {
 	}
 
 	public static void heapSort(int[] vetor) throws Exception {
-		Heap heap = new Heap(vetor, vetor.length, 0);
-
+		int tamanho = vetor.length + 1; 
+		Heap heap = new Heap(new int[tamanho],tamanho , 0);
 		for (int i = 0; i < vetor.length; i++)
 			insereHBC(heap, vetor[i]);
 		for (int i = 0; i < vetor.length; i++)
@@ -116,7 +126,7 @@ public class ordena {
 		}
 	}
 
-	public static void BucketSort(int[] copia) {
+	public static void bucketSort(int[] copia) {
 		int numBuckets = copia.length;
 
 		LinkedList[] linkedLists = new LinkedList[numBuckets];
@@ -162,7 +172,7 @@ public class ordena {
 
 		heap.ultima++;
 		int i = heap.ultima;
-		while (i > 1 && Math.floor(i / 2) > x) {
+		while (i > 1 && heap.vetor[(int) Math.floor(i / 2)] > x) {
 			heap.vetor[i] = heap.vetor[(int) Math.floor(i / 2)];
 			i = (int) Math.floor(i / 2);
 		}
